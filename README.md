@@ -8,6 +8,7 @@ This project is a boilerplate and learning environment for automated UI testing 
 
 - [Node.js](https://nodejs.org/) (v16 or higher)
 - npm (installed with Node.js)
+- npm install dotenv
 
 ### Installation
 
