@@ -1,6 +1,6 @@
 const { test } = require('@playwright/test');
-const { PinPage } = require('../pages/pinPage');
-const testData = require('../utils/testData');
+const { PinPage } = require('../../pages/pinPage');
+const testData = require('../../utils/testData');
 
 // Automatically open DevTools for every window/tab
 test.use({

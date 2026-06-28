@@ -1,7 +1,7 @@
 const { test: setup, expect } = require('@playwright/test');
-const { LoginPage } = require('../pages/loginPage');
+const { LoginPage } = require('../../pages/loginPage');
 const path = require('path');
-const testData = require('../utils/testData');
+const testData = require('../../utils/testData');
 const fs = require('fs');
 
 const authFile = path.join(__dirname, '../.auth/user.json');

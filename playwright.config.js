@@ -1,4 +1,5 @@
 // playwright.config.js
+require('dotenv').config();
 import { defineConfig, devices } from '@playwright/test';
 import path from 'path';
 import fs from 'fs';
@@ -37,6 +38,20 @@ export default defineConfig({
       },
       // This project depends on 'setup' being successful
       // dependencies: ['setup'],
+    },
+    {
+      name: 'api',
+      testDir: './tests/api',
+      use: {
+        // No browser needed for API tests
+      },
+    },
+    {
+      name: 'web',
+      testDir: './tests/web',
+      use: {
+        browserName: 'chromium',
+      },
     },
   ],
 });

@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
-const { SimpleSearchTokpedPage } = require('../pages/tokped');
-const testData = require('../utils/testData');
+const { SimpleSearchTokpedPage } = require('../../pages/tokped');
+const testData = require('../../utils/testData');
 
 
 test.afterEach(async ({ page }) => {
