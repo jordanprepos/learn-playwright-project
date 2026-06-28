@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const { activePartner } = require('../config/partners.config');
 const { apiPath } = require('../config/apiPath.config');
+const { attachRequestResponse } = require('./reportHelper');
 
 function getJakartaTimestamp() {
   const tzoffset = 7 * 60 * 60 * 1000; // Jakarta is UTC+7
@@ -189,9 +190,27 @@ class TokenManager {
       const expiresInSec = parseInt(b2b2cResult.accessTokenExpiryTime || b2b2cResult.expires_in || 300, 10);
       this.tokenExpiry = now + (expiresInSec * 1000);
 
+      // At the end of getTokens(), change the return to include raw responses
       return {
         accessToken: this.b2bToken,
-        customerToken: this.b2b2cToken
+        customerToken: this.b2b2cToken,
+        // Add these for logging
+        debug: {
+          b2b: {
+            requestUrl: b2bUrl,
+            requestHeaders: b2bHeaders,
+            requestBody: b2bData,
+            responseBody: b2bResult,
+            status: b2bResponse.status(),
+          },
+          b2b2c: {
+            requestUrl: b2b2cUrl,
+            requestHeaders: b2b2cHeaders,
+            requestBody: b2b2cPayload,
+            responseBody: b2b2cResult,
+            status: b2b2cResponse.status(),
+          },
+        }
       };
 
     } catch (error) {
@@ -202,6 +221,7 @@ class TokenManager {
       throw error;
     }
   }
+  
 }
 
 module.exports = new TokenManager();

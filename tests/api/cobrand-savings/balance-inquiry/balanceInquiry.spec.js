@@ -3,6 +3,7 @@ const tokenManager = require("../../../../utils/tokenManager");
 const { activePartner } = require("../../../../config/partners.config");
 const { apiPath } = require("../../../../config/apiPath.config");
 const { generateHeaders } = require("../../../../utils/headerHelper");
+const { attachRequestResponse } = require("../../../../utils/reportHelper");
 
 
 const baseUrl = apiPath.batamBaseUrl;
@@ -15,6 +16,27 @@ test.describe("Cobrand Saving Balance Inquiry", () => {
   
   test.beforeEach(async ({ request }) => {
     tokens = await tokenManager.getTokens(request);
+    
+    // Attach B2B token request/response to report
+    await attachRequestResponse({
+      label: 'B2B Token',
+      headers: tokens.debug.b2b.requestHeaders,
+      requestBody: tokens.debug.b2b.requestBody,
+      responseBody: tokens.debug.b2b.responseBody,
+      status: tokens.debug.b2b.status,
+      statusText: tokens.debug.b2b.statusText,
+    });
+
+    // Attach B2B2C token request/response to report
+    await attachRequestResponse({
+      label: 'B2B2C Token',
+      headers: tokens.debug.b2b2c.requestHeaders,
+      requestBody: tokens.debug.b2b2c.requestBody,
+      responseBody: tokens.debug.b2b2c.responseBody,
+      status: tokens.debug.b2b2c.status,
+      statusText: tokens.debug.b2b2c.statusText,
+    });
+
   });
 
   test("Should execute Cobrand Saving Balance Inquiry successfully", async ({ request }) => {
@@ -41,24 +63,13 @@ test.describe("Cobrand Saving Balance Inquiry", () => {
 
     const body = await response.json();
 
-    await test.info().attach('Request Headers', {
-      body: JSON.stringify(headers, null, 2),
-      contentType: 'application/json',
-    });
-
-    await test.info().attach('Rquest Body', {
-      body: JSON.stringify(requestBody, null, 2),
-      contentType: 'application/json',
-    });
-
-    await test.info().attach('Response Body', {
-      body: JSON.stringify(body, null, 2),
-      contentType: 'application/json',
-    });
-    
-    await test.info().attach('Response Status', {
-      body: `${response.status()} ${response.statusText()}`,
-      contentType: 'text/plain',
+    await attachRequestResponse({
+      label: 'CSA - Balance Inquiry V1',
+      headers,
+      requestBody,
+      responseBody: body,
+      status: response.status(),
+      statusText: response.statusText(),
     });
 
     expect(response.status()).toBe(200);
@@ -66,7 +77,7 @@ test.describe("Cobrand Saving Balance Inquiry", () => {
     expect(body.responseMessage).toBe("Request has been processed successfully");
 
 
-    
+
   });
 
 
