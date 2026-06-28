@@ -1,4 +1,4 @@
-# Playwright UI Testing - Learning Project
+# Playwright UI and API Testing - Learning Project
 
 This project is a boilerplate and learning environment for automated UI testing using [Playwright](https://playwright.dev/). It demonstrates modern testing practices like the Page Object Model (POM), simultaneous multi-window testing, and global lifecycle management.
 
