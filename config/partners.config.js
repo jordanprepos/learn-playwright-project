@@ -59,6 +59,7 @@ const partners = {
     accountNo: '81100201339',
   },
 
+
   cfx_atreus_satu: {
     ...cfxBase,
     deviceId: '0811222117',

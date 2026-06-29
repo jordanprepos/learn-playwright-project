@@ -13,30 +13,27 @@ const balanceInquiryV1_1Url = `${baseUrl}${apiPath.cobrandSavings.pathBalanceInq
 test.describe("Cobrand Saving Balance Inquiry", () => {
   
   let tokens;
-  
   test.beforeEach(async ({ request }) => {
     tokens = await tokenManager.getTokens(request);
-    
-    // Attach B2B token request/response to report
-    await attachRequestResponse({
-      label: 'B2B Token',
-      headers: tokens.debug.b2b.requestHeaders,
-      requestBody: tokens.debug.b2b.requestBody,
-      responseBody: tokens.debug.b2b.responseBody,
-      status: tokens.debug.b2b.status,
-      statusText: tokens.debug.b2b.statusText,
-    });
 
-    // Attach B2B2C token request/response to report
-    await attachRequestResponse({
-      label: 'B2B2C Token',
-      headers: tokens.debug.b2b2c.requestHeaders,
-      requestBody: tokens.debug.b2b2c.requestBody,
-      responseBody: tokens.debug.b2b2c.responseBody,
-      status: tokens.debug.b2b2c.status,
-      statusText: tokens.debug.b2b2c.statusText,
-    });
+    // Only attach if tokens were freshly fetched (not from cache)
+    if (tokens.debug) {
+      await attachRequestResponse({
+        label: 'B2B Token',
+        headers: tokens.debug.b2b.requestHeaders,
+        requestBody: tokens.debug.b2b.requestBody,
+        responseBody: tokens.debug.b2b.responseBody,
+        status: tokens.debug.b2b.status,
+      });
 
+      await attachRequestResponse({
+        label: 'B2B2C Token',
+        headers: tokens.debug.b2b2c.requestHeaders,
+        requestBody: tokens.debug.b2b2c.requestBody,
+        responseBody: tokens.debug.b2b2c.responseBody,
+        status: tokens.debug.b2b2c.status,
+      });
+    }
   });
 
   test("Should execute Cobrand Saving Balance Inquiry successfully", async ({ request }) => {
@@ -75,13 +72,7 @@ test.describe("Cobrand Saving Balance Inquiry", () => {
     expect(response.status()).toBe(200);
     expect(body.responseCode).toBe("2001100");
     expect(body.responseMessage).toBe("Request has been processed successfully");
-
-
-
   });
-
-
-
 
 
 });
