@@ -1,13 +1,13 @@
 // playwright.config.js
 require('dotenv').config();
-import { defineConfig, devices } from '@playwright/test';
-import path from 'path';
-import fs from 'fs';
+const { defineConfig, devices } = require('@playwright/test');
+const path = require('path');
+const fs = require('fs');
 
 // Define the path where the session state will be stored
-export const STORAGE_STATE = path.join(__dirname, '.auth/user.json');
+const STORAGE_STATE = path.join(__dirname, '.auth/user.json');
 
-export default defineConfig({
+module.exports = defineConfig({
   testDir: './tests',
   retries: 0,
   reporter: 'html',
@@ -55,3 +55,5 @@ export default defineConfig({
     },
   ],
 });
+
+module.exports.STORAGE_STATE = STORAGE_STATE;

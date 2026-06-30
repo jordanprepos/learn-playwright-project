@@ -10,6 +10,8 @@ const sandboxBase = {
   privateKey: process.env.SANDBOX_PRIVATE_KEY,
   ipAddress: process.env.B2B_IP_ADDRESS,
   channelId: process.env.SANDBOX_CHANNEL_ID || 'APIMGM',
+  redirectUrl: 'https://688358d521fa24876a9dbb73.mockapi.io',
+  partnerUrl: 'https://mock-mb-ob.meta-uat.nobubank.com'
 }
 
 const cfxBase = {
@@ -29,6 +31,8 @@ const boostBase = {
   privateKey: process.env.BOOST_PRIVATE_KEY,
   channelId: 'BOOSTID',
   ipAddress: process.env.B2B_IP_ADDRESS,
+  redirectUrl: 'https://payflex-uat.myboost.co.id',
+  partnerUrl: 'https://mock-mb-ob.meta-uat.nobubank.com/'
 };
 
 const partners = {
@@ -130,12 +134,15 @@ const partners = {
   },
 };
 
-// Select the partner based on PARTNER_ENV environment variable, default to 'sandbox'
-const activePartnerEnv = process.env.PARTNER_ENV || 'sandbox';
+// Select the partner based on PARTNER_ENV environment variable
+// Valid keys: sandbox_audi_lagi, sandbox_uat_card_service, cfx_atreus_satu,
+//             cfx_ami_sihotang, boost_huskar, boost_rexus, boost_rxking
+const activePartnerEnv = process.env.PARTNER_ENV || 'sandbox_uat_card_service';
 const activePartner = partners[activePartnerEnv];
 
 if (!activePartner) {
-  throw new Error(`Partner environment "${activePartnerEnv}" is not defined in partners.config.js`);
+  const validKeys = Object.keys(partners).join(', ');
+  throw new Error(`Partner environment "${activePartnerEnv}" is not defined in partners.config.js. Valid options: ${validKeys}`);
 }
 
 module.exports = {
