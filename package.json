@@ -5,12 +5,12 @@
   "main": "index.js",
   "scripts": {
     "test": "playwright test",
-    "test:api":        "node --no-deprecation node_modules/.bin/playwright test --project=api",
-    "test:hybrid":     "node --no-deprecation node_modules/.bin/playwright test --project=hybrid",
+    "test:api": "node --no-deprecation node_modules/.bin/playwright test --project=api",
+    "test:hybrid": "node --no-deprecation node_modules/.bin/playwright test --project=hybrid",
     "test:hybrid:pos": "node --no-deprecation node_modules/.bin/playwright test --project=hybrid --grep Positive",
     "test:hybrid:neg": "node --no-deprecation node_modules/.bin/playwright test --project=hybrid --grep Negative",
-    "test:web":        "node --no-deprecation node_modules/.bin/playwright test --project=web",
-    "test:all":        "node --no-deprecation node_modules/.bin/playwright test"
+    "test:web": "node --no-deprecation node_modules/.bin/playwright test --project=web",
+    "test:all": "node --no-deprecation node_modules/.bin/playwright test"
   },
   "keywords": [],
   "author": "",
