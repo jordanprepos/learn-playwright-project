@@ -84,9 +84,7 @@ test.describe("Cobrand Saving Change PIN", () => {
 
             expect(response.status()).toBe(200);
             expect(body.responseCode).toMatch(/^\d{3}95\d{2}$/); // validates middle 2 digits = "95"
-            expect(body.responseMessage).toBe(
-                "Request has been processed successfully",
-            );
+            expect(body.responseMessage).toBe("Request has been processed successfully");
 
             await attachRequestResponse({
                 label: "CSA - Change PIN V1",
@@ -111,7 +109,6 @@ test.describe("Cobrand Saving Change PIN", () => {
                 .getByRole("heading", { name: "Masukkan 6 digit PIN Kamu" })
                 .waitFor({ state: "visible", timeout: 30000 });
 
-            expect
 
             await test.info().attach("before-input-pin", {
                 body: await page.screenshot(),

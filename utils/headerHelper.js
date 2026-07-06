@@ -44,11 +44,11 @@ function generateHeaders({ method, path, body, activePartner, tokens }) {
     const signature = generateSignature({
         method,
         path,
-        accessToken: tokens.accessToken,
-        customerToken: tokens.customerToken,
         body,
         timestamp,
         clientSecret: activePartner.clientSecret,
+        accessToken: tokens.accessToken,
+        customerToken: tokens.customerToken,
     });
 
     return {
