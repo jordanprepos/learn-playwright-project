@@ -213,15 +213,19 @@ class TokenManager {
                         requestUrl: b2bUrl,
                         requestHeaders: b2bHeaders,
                         requestBody: b2bData,
+                        responseHeaders: b2bResponse.headers(),
                         responseBody: b2bResult,
                         status: b2bResponse.status(),
+                        statusText: b2bResponse.statusText(),
                     },
                     b2b2c: {
                         requestUrl: b2b2cUrl,
                         requestHeaders: b2b2cHeaders,
                         requestBody: b2b2cPayload,
+                        responseHeaders: b2b2cResponse.headers(),
                         responseBody: b2b2cResult,
                         status: b2b2cResponse.status(),
+                        statusText: b2b2cResponse.statusText(),
                     },
                 }
             };

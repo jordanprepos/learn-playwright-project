@@ -18,21 +18,21 @@ test.describe("Cobrand Saving Balance Inquiry", () => {
 
         // Only attach if tokens were freshly fetched (not from cache)
         if (tokens.debug) {
-            await attachRequestResponse({
-                label: 'B2B Token',
-                headers: tokens.debug.b2b.requestHeaders,
-                requestBody: tokens.debug.b2b.requestBody,
-                responseBody: tokens.debug.b2b.responseBody,
-                status: tokens.debug.b2b.status,
-            });
+            await attachRequestResponse(
+                {
+                    label: 'B2B Token',
+                    ...tokens.debug.b2b,
+                    url: tokens.debug.b2b.requestUrl,
+                    headers: tokens.debug.b2b.requestHeaders
+                });
 
-            await attachRequestResponse({
-                label: 'B2B2C Token',
-                headers: tokens.debug.b2b2c.requestHeaders,
-                requestBody: tokens.debug.b2b2c.requestBody,
-                responseBody: tokens.debug.b2b2c.responseBody,
-                status: tokens.debug.b2b2c.status,
-            });
+            await attachRequestResponse(
+                {
+                    label: 'B2B2C Token',
+                    ...tokens.debug.b2b2c,
+                    url: tokens.debug.b2b2c.requestUrl,
+                    headers: tokens.debug.b2b2c.requestHeaders
+                });
         }
     });
 
@@ -62,8 +62,10 @@ test.describe("Cobrand Saving Balance Inquiry", () => {
 
         await attachRequestResponse({
             label: 'CSA - Balance Inquiry V1',
+            url: balanceInquiryV1Url,
             headers,
             requestBody,
+            responseHeaders: response.headers(),
             responseBody: body,
             status: response.status(),
             statusText: response.statusText(),
@@ -99,8 +101,10 @@ test.describe("Cobrand Saving Balance Inquiry", () => {
 
         await attachRequestResponse({
             label: 'CSA - Balance Inquiry V1.1',
+            url: balanceInquiryV1_1Url,
             headers,
             requestBody,
+            responseHeaders: response.headers(),
             responseBody: body,
             status: response.status(),
             statusText: response.statusText(),
