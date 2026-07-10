@@ -3,8 +3,9 @@ const tokenManager = require("../../../../utils/tokenManager");
 const { activePartner } = require("../../../../config/partners.config");
 const { apiPath } = require("../../../../config/apiPath.config");
 const { generateHeaders } = require("../../../../utils/headerHelper");
-const { attachRequestResponse } = require("../../../../utils/reportHelper");
-const { enterPin } = require("../../../../utils/pinHelper");
+const { attachRequestResponse, attachScreenshot } = require("../../../../utils/reportHelper");
+const { enterPin, enterOtp } = require("../../../../utils/pinHelper");
+const { getOtpFromSlack } = require("../../../../utils/slackHelper");
 
 const baseUrl = apiPath.batamBaseUrl;
 const csaResetPinUrl = `${baseUrl}${apiPath.cobrandSavings.pathResetPin}`;
@@ -73,7 +74,7 @@ test.describe('Cobrand Saving Reset PIN', () => {
             expect(webviewUrl).toBeTruthy();
             expect(webviewUrl).toContain('https://surabaya-obk-uat-onprem.nobubank.com/reset-mpin');
 
-            console.log("WEBVIEW URL >>>>>>>>>>>>>. " + webviewUrl);
+            console.log("WEBVIEW URL >>>>>>>>>>>>> " + webviewUrl);
 
             await attachRequestResponse({
                 label: 'CSA - Reset PIN',
@@ -100,22 +101,52 @@ test.describe('Cobrand Saving Reset PIN', () => {
 
             await page.getByText('Reset PIN', { exact: true }).waitFor({ state: 'visible', timeout: 30000 });
             await expect(page.getByRole('button', { name: 'Selanjutnya' })).toBeDisabled();
+            await attachScreenshot(page, 'Screen 1 - Reset PIN Form');
 
             // Step 1: Fill Form
             await page.getByPlaceholder('Nama Lengkap').fill(activePartner.name);
             await page.getByPlaceholder('Nomer Induk Kependudukan').fill(activePartner.nik);
             await page.getByPlaceholder('Alamat Email').fill(activePartner.email);
-
-            // Step 2: Click Next
             await expect(page.getByRole('button', { name: 'Selanjutnya' })).toBeVisible();
+            await attachScreenshot(page, 'Screen 1 - Form Filled');
+
+            // Step 2: Click Next — this triggers the OTP being sent to #bento-bot.
+            // Capture the time first (Slack `oldest` is epoch seconds) so we only
+            // accept OTP messages posted after this click, never a stale one.
+            const otpRequestedAt = Date.now() / 1000;
             await page.getByRole('button', { name: 'Selanjutnya' }).click();
             await expect(page.getByRole('heading', { name: 'Masukkan Kode Verifikasi' })).toBeVisible();
+            await attachScreenshot(page, 'Screen 2 - OTP Verification');
 
-            // // Step 4: Set New PIN
-            // const newPin = "142536";
-            // await enterPin(page, newPin);
+            // Step 3: Read the OTP from Slack and enter it.
+            // Bento-bot posts the destination in international format (0812... -> 62812...),
+            // so match on our partner's number to ignore OTPs meant for other accounts.
+            // The OTP wording varies per flow ("RAHASIA Anda:744975", "Anda Code:808390",
+            // "anda 480088"), so accept any of them after the destination.
+            const destination = '62' + activePartner.phoneNo.slice(1);
+            const otp = await getOtpFromSlack({
+                oldest: otpRequestedAt,
+                otpRegex: new RegExp(`Destination:\\s*${destination}[\\s\\S]*?anda\\s*:?\\s*(?:Code\\s*:\\s*)?(\\d{6})`, 'i'),
+            });
+            console.log("OTP FROM SLACK >>>>>>>>>>>>> " + otp);
+            //Input otp 
+            await enterOtp(page, otp);
+            // The OTP screen disappearing means the code was accepted
+            await expect(page.getByRole('heading', { name: 'Masukkan Kode Verifikasi' })).toBeHidden({ timeout: 15000 });
+
+            // Step 4: Set New PIN
+            await expect(page.getByRole('heading', { name: 'Buat PIN Baru', level: 1 })).toBeVisible();
+            // The product name in the subtitle varies ("Nobu", "Nobu Madera", ...), so match around it
+            await expect(page.getByText(/Masukkan PIN baru .*untuk akses login dan transaksi/)).toBeVisible();
+            await attachScreenshot(page, 'Screen 3 - Create New PIN');
+
+            const newPin = "142536";
+            await enterPin(page, newPin);
 
             // // Step 5: Confirm New PIN
+            await expect(page.getByRole('heading', { name: 'Konfirmasi PIN Baru', level: 1 })).toBeVisible();
+            await attachScreenshot(page, 'Screen 4 - Confirm New PIN');
+
             // await enterPin(page, newPin);
 
         });

@@ -75,6 +75,18 @@ const partners = {
         accountNo: '81100201339',
     },
 
+    sandbox_uat_xiaomi_redmi: {
+        ...sandboxBase,
+        deviceId: 'device-xiaomi-redmi',
+        authCode: process.env.SANDBOX_UAT_XIAOMI_REDMI_AUTH_CODE,
+        name: 'UAT XIAOMI REDMI',
+        phoneNo: '085161451133',
+        email: 'christopher.jordan@ddt.id',
+        nik: '3802075087286674',
+        accountId: '111081981197',
+        cif: '250519111758000',
+        accountNo: '81100201347',
+    },
 
     cfx_atreus_satu: {
         ...cfxBase,

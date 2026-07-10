@@ -20,4 +20,15 @@ async function attachRequestResponse({ label = 'API Call', headers, requestBody,
   });
 }
 
-module.exports = { attachRequestResponse };
+/**
+ * Attach a labeled full-page screenshot to the HTML report.
+ * Call it after each screen/step you want captured.
+ */
+async function attachScreenshot(page, label = 'Screenshot') {
+  await test.info().attach(label, {
+    body: await page.screenshot({ fullPage: true }),
+    contentType: 'image/png',
+  });
+}
+
+module.exports = { attachRequestResponse, attachScreenshot };

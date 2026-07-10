@@ -7,4 +7,13 @@ async function enterPin(page, pin) {
     }
 }
 
-module.exports = { enterPin };
+/**
+ * Fill the OTP verification screen, which uses one textbox per digit
+ * ("Digit 1" ... "Digit 6") that auto-advances focus as you type.
+ */
+async function enterOtp(page, otp) {
+    await page.getByRole("textbox", { name: "Digit 1" }).click();
+    await page.keyboard.type(otp, { delay: 150 });
+}
+
+module.exports = { enterPin, enterOtp };
