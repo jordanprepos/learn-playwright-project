@@ -1,19 +1,13 @@
+const { test, expect } = require("@playwright/test");
+const tokenManager = require("../../../../utils/tokenManager");
+const { activePartner } = require("../../../../config/partners.config");
 const { apiPath } = require("../../../../config/apiPath.config");
 const { generateHeaders } = require("../../../../utils/headerHelper");
-
-
+const { attachRequestResponse } = require("../../../../utils/reportHelper");
+const { enterPin } = require("../../../../utils/pinHelper");
 
 const baseUrl = apiPath.batamBaseUrl;
 const csaResetPinUrl = `${baseUrl}${apiPath.cobrandSavings.pathResetPin}`;
-
-async function enterPin(page, pin) {
-    for (const digit of pin.split("")) {
-        await page.getByRole("button", { name: digit, exact: true }).click();
-
-        // Give the application 300 milliseconds to process the click before moving on to the next digit
-        await page.waitForTimeout(200);
-    }
-}
 
 test.describe('Cobrand Saving Reset PIN', () => {
 
@@ -75,9 +69,11 @@ test.describe('Cobrand Saving Reset PIN', () => {
             expect(body.responseCode).toMatch(/^\d{3}98\d{2}$/);
             expect(body.responseMessage).toBe("Request has been processed successfully");
 
-            const webviewUrl = body.params?.resetPinWebviewUrl;
+            const webviewUrl = body.additionalInfo?.webViewUrl;
             expect(webviewUrl).toBeTruthy();
             expect(webviewUrl).toContain('https://surabaya-obk-uat-onprem.nobubank.com/reset-mpin');
+
+            console.log("WEBVIEW URL >>>>>>>>>>>>>. " + webviewUrl);
 
             await attachRequestResponse({
                 label: 'CSA - Reset PIN',
@@ -88,11 +84,39 @@ test.describe('Cobrand Saving Reset PIN', () => {
                 statusText: response.statusText(),
             });
 
+            page.on('console', msg =>
+                console.log('console:', msg.text())
+            );
+            page.on('pageerror', err =>
+                console.log('pageerror:', err.message)
+            );
+            page.on('requestfailed', req =>
+                console.log('requestfailed:', req.url(), req.failure()?.errorText));
+
             await page.goto(webviewUrl, {
                 waitUntil: 'domcontentloaded',
                 timeout: 60000 //60 seocnds
             });
 
+            await page.getByText('Reset PIN', { exact: true }).waitFor({ state: 'visible', timeout: 30000 });
+            await expect(page.getByRole('button', { name: 'Selanjutnya' })).toBeDisabled();
+
+            // Step 1: Fill Form
+            await page.getByPlaceholder('Nama Lengkap').fill(activePartner.name);
+            await page.getByPlaceholder('Nomer Induk Kependudukan').fill(activePartner.nik);
+            await page.getByPlaceholder('Alamat Email').fill(activePartner.email);
+
+            // Step 2: Click Next
+            await expect(page.getByRole('button', { name: 'Selanjutnya' })).toBeVisible();
+            await page.getByRole('button', { name: 'Selanjutnya' }).click();
+            await expect(page.getByRole('heading', { name: 'Masukkan Kode Verifikasi' })).toBeVisible();
+
+            // // Step 4: Set New PIN
+            // const newPin = "142536";
+            // await enterPin(page, newPin);
+
+            // // Step 5: Confirm New PIN
+            // await enterPin(page, newPin);
 
         });
     });

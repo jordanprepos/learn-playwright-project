@@ -56,6 +56,7 @@ module.exports = defineConfig({
         {
             name: 'hybrid', // API + browser
             testDir: './tests/hybrid',
+            timeout: 90000,
             use: {
                 browserName: 'chromium',
                 navigationTimeout: 1200000,
