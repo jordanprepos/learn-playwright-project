@@ -4,14 +4,21 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "playwright test"
+    "test": "playwright test",
+    "test:api": "node --no-deprecation node_modules/.bin/playwright test --project=api",
+    "test:hybrid": "node --no-deprecation node_modules/.bin/playwright test --project=hybrid",
+    "test:hybrid:pos": "node --no-deprecation node_modules/.bin/playwright test --project=hybrid --grep Positive",
+    "test:hybrid:neg": "node --no-deprecation node_modules/.bin/playwright test --project=hybrid --grep Negative",
+    "test:web": "node --no-deprecation node_modules/.bin/playwright test --project=web",
+    "test:all": "node --no-deprecation node_modules/.bin/playwright test"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@playwright/test": "^1.58.0",
-    "playwright": "^1.53.2"
+    "@playwright/test": "^1.61.1",
+    "dotenv": "^17.4.2",
+    "playwright": "^1.61.1"
   }
 }

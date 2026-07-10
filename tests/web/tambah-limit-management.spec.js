@@ -1,6 +1,6 @@
 const { test, expect } = require('@playwright/test');
-const { TambahLimitManagementPage } = require('../pages/tambah-limit-management');
-const testData = require('../utils/testData');
+const { TambahLimitManagementPage } = require('../../pages/tambah-limit-management');
+const testData = require('../../utils/testData');
 
 test.afterEach(async ({ page }) => {
     // This will keep the browser open and show the Playwright Inspector

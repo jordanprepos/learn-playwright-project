@@ -3,4 +3,13 @@ test-results/
 playwright-report/
 blob-report/
 playwright/.cache/
+
+# Environment files
 .env
+.env.local
+.env.*.local
+
+# Just in case — backup/swap files that editors sometimes create
+*.swp
+*.swo
+.DS_Store

@@ -7,4 +7,4 @@ async function globalTeardown(config) {
   // or clean up temporary files created during the run
 }
 
-export default globalTeardown;
+module.exports = globalTeardown;
