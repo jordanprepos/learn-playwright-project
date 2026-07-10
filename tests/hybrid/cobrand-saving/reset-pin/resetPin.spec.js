@@ -20,21 +20,21 @@ test.describe('Cobrand Saving Reset PIN', () => {
         tokens = await tokenManager.getTokens(request);
         // Only attach if tokens were freshly fetched (not from cache)
         if (tokens.debug) {
-            await attachRequestResponse({
-                label: 'B2B Token',
-                headers: tokens.debug.b2b.requestHeaders,
-                requestBody: tokens.debug.b2b.requestBody,
-                responseBody: tokens.debug.b2b.responseBody,
-                status: tokens.debug.b2b.status,
-            });
+            await attachRequestResponse(
+                {
+                    label: 'B2B Token',
+                    ...tokens.debug.b2b,
+                    url: tokens.debug.b2b.requestUrl,
+                    headers: tokens.debug.b2b.requestHeaders
+                });
 
-            await attachRequestResponse({
-                label: 'B2B2C Token',
-                headers: tokens.debug.b2b2c.requestHeaders,
-                requestBody: tokens.debug.b2b2c.requestBody,
-                responseBody: tokens.debug.b2b2c.responseBody,
-                status: tokens.debug.b2b2c.status,
-            });
+            await attachRequestResponse(
+                {
+                    label: 'B2B2C Token',
+                    ...tokens.debug.b2b2c,
+                    url: tokens.debug.b2b2c.requestUrl,
+                    headers: tokens.debug.b2b2c.requestHeaders
+                });
         }
     });
 
@@ -78,8 +78,10 @@ test.describe('Cobrand Saving Reset PIN', () => {
 
             await attachRequestResponse({
                 label: 'CSA - Reset PIN',
+                url: csaResetPinUrl,
                 headers,
                 requestBody,
+                responseHeaders: response.headers(),
                 responseBody: body,
                 status: response.status(),
                 statusText: response.statusText(),
@@ -131,26 +133,27 @@ test.describe('Cobrand Saving Reset PIN', () => {
             console.log("OTP FROM SLACK >>>>>>>>>>>>> " + otp);
             //Input otp 
             await enterOtp(page, otp);
-            // The OTP screen disappearing means the code was accepted
-            await expect(page.getByRole('heading', { name: 'Masukkan Kode Verifikasi' })).toBeHidden({ timeout: 15000 });
+            await expect(page.getByRole('heading', { name: 'Masukkan Kode Verifikasi' }));
 
             // Step 4: Set New PIN
             await expect(page.getByRole('heading', { name: 'Buat PIN Baru', level: 1 })).toBeVisible();
             // The product name in the subtitle varies ("Nobu", "Nobu Madera", ...), so match around it
             await expect(page.getByText(/Masukkan PIN baru .*untuk akses login dan transaksi/)).toBeVisible();
-            await attachScreenshot(page, 'Screen 3 - Create New PIN');
+            await attachScreenshot(page, 'Screen 4 - Create New PIN');
 
             const newPin = "142536";
             await enterPin(page, newPin);
 
-            // // Step 5: Confirm New PIN
+            // Step 5: Confirm New PIN
             await expect(page.getByRole('heading', { name: 'Konfirmasi PIN Baru', level: 1 })).toBeVisible();
-            await attachScreenshot(page, 'Screen 4 - Confirm New PIN');
+            await attachScreenshot(page, 'Screen 5 - Confirm New PIN');
+            await enterPin(page, newPin);
 
-            // await enterPin(page, newPin);
-
+            // Step 6: Success Page
+            await expect(page.getByText('PIN Berhasil Diubah')).toBeVisible();
+            await expect(page.getByText('Kamu dapat konfirmasi transaksi dengan PIN yang baru kamu buat')).toBeVisible();
+            await attachScreenshot(page, 'Screen 6 - Success Reset PIN Page');
         });
     });
-
 
 });
