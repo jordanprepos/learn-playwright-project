@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "format": "prettier --write \"tests/**/*.js\" \"utils/**/*.js\" \"config/**/*.js\"",
     "test": "playwright test",
     "test:api": "node --no-deprecation node_modules/.bin/playwright test --project=api",
     "test:hybrid": "node --no-deprecation node_modules/.bin/playwright test --project=hybrid",
@@ -19,6 +20,7 @@
   "devDependencies": {
     "@playwright/test": "^1.61.1",
     "dotenv": "^17.4.2",
-    "playwright": "^1.61.1"
+    "playwright": "^1.61.1",
+    "prettier": "^3.9.5"
   }
 }

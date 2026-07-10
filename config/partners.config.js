@@ -157,6 +157,32 @@ const partners = {
         accountNo: '81100227401',
     },
 
+    boost_demouat: {
+        ...boostBase,
+        authCode: process.env.BOOST_DEMOUAT_AUTH_CODE,
+        deviceId: '0811222118',
+        name: 'Demo UAT',
+        phoneNo: '0811222118',
+        email: 'christopher.jordan@ddt.id',
+        nik: '3277222512902318',
+        accountId: '111204969133',
+        cif: '260612150833000',
+        accountNo: '81100230185',
+    },
+
+    boost_demoua2t: {
+        ...boostBase,
+        authCode: process.env.BOOST_DEMOUAT2_AUTH_CODE,
+        deviceId: '0811222119',
+        name: 'Demo UAT 2',
+        phoneNo: '0811222119',
+        email: 'christopher.jordan@ddt.id',
+        nik: '3277222512902319',
+        accountId: '111212001352',
+        cif: '260612161251000',
+        accountNo: '81100230193',
+    },
+
     bukuWarung_hotfixDeviceA: {
         ...bukuWarungBase,
         authCode: process.env.BUKUWARUNG_HOTFIX_DEVICE_A_AUTH_CODE,

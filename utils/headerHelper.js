@@ -28,6 +28,15 @@ function generateTimestamp() {
     return new Date().toISOString().replace('Z', '+07:00');
 }
 
+/**
+ * Jakarta local time in SNAP format for request bodies,
+ * e.g. 2026-07-11T00:27:05+07:00 (no milliseconds).
+ */
+function generateJakartaTimestamp() {
+    const jakartaOffsetMs = 7 * 60 * 60 * 1000; // UTC+7
+    return new Date(Date.now() + jakartaOffsetMs).toISOString().slice(0, 19) + '+07:00';
+}
+
 function generateExternalId() {
     return Math.floor(Math.random() * 1e12).toString();
 }
@@ -65,4 +74,4 @@ function generateHeaders({ method, path, body, activePartner, tokens }) {
     };
 }
 
-module.exports = { generateTimestamp, generateExternalId, generateSignature, generateHeaders };
+module.exports = { generateTimestamp, generateJakartaTimestamp, generateExternalId, generateSignature, generateHeaders };
