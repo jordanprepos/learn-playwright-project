@@ -10,7 +10,6 @@ module.exports = defineConfig({
     globalTeardown: require.resolve('./global-teardown'),
     use: {
         headless: true,
-        // baseURL: 'https://bima.meta-uat.nobubank.com',
         screenshot: 'only-on-failure',
         video: 'retain-on-failure',
     },

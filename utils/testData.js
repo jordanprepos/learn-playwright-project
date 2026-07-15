@@ -1,11 +1,9 @@
 module.exports = {
     cmsObk: {
-        login: 'https://bima.meta-uat.nobubank.com/#/auth/login',
         cmsOkbUser: 'superadmin',
         cmsObkPass: 'test',
         webviewUrl: ''
     }, ekycPortal: {
-        ekycPortalUrl: 'https://portal-ekyc-uat-cloud.nobubank.com/',
         ekycPortalUser: 'staff1111intan@yopmail.com',
         ekycPortalPass: 'intanAB1009$'
     }, partnerInfo: {

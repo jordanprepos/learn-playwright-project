@@ -2,19 +2,17 @@
 /**
  * Put Playwright selector in this pages folder
  */
-
 const { expect } = require("@playwright/test");
-const testData = require("../../utils/testData");
+const { dashboardBaseUrl } = require("../../config/dashboardBase.config");
 
 class EkycPortalLoginPage {
 
     constructor(page) {
         //All page selector put here
         this.page = page;
-        this.ekycPortalUrl = testData.ekycPortal.ekycPortalUrl;
+        this.ekycPortalUrl = dashboardBaseUrl.ekycPortalBaseUrl;
         this.emailField = this.page.getByRole('textbox', { name: 'Email' });
         this.passwordField = this.page.locator('input[name="password"]');
-
     }
 
     async gotoEkycPortal() {
