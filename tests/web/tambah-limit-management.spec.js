@@ -15,7 +15,7 @@ test('Tambah Limit Management', async ({ page }) => {
     // Increase timeout since this flow involves heavy navigations
     test.setTimeout(200000);
 
-    // 1. Open the application (will use the stored storage state from .auth/user.json)
+    // 1. Open the application
     // We go to /# /dashboard to ensure we land on the right page
     await page.goto('/#/dashboard');
     

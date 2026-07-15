@@ -2,11 +2,6 @@
 require('dotenv').config();
 
 const { defineConfig, devices } = require('@playwright/test');
-const path = require('path');
-const fs = require('fs');
-
-// Define the path where the session state will be stored
-const STORAGE_STATE = path.join(__dirname, '.auth/user.json');
 
 module.exports = defineConfig({
     testDir: './tests',
@@ -22,29 +17,14 @@ module.exports = defineConfig({
     // ✅ Pass env vars explicitly to all worker processes
     workers: 1,  // optional — forces single worker, avoids env sharing issues
     projects: [
-        // Project to handle the authentication once
-        {
-            name: 'setup',
-            testMatch: /auth\.setup\.js/,
-            use: {
-                // Allow setup to read the existing state to check validity
-                storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
-            }
-        },
-        // Main testing project(s)
         {
             name: 'web',
-            // Tell this project to ONLY look inside the web folder, just like your 'web' project does
             testDir: './tests/web',
             use: {
                 ...devices['Desktop Chrome'],
-                // storageState is inherited or explicitly set here
-                storageState: fs.existsSync(STORAGE_STATE) ? STORAGE_STATE : undefined,
                 browserName: 'chromium',
                 screenshot: 'only-on-failure',
             },
-            // This project depends on 'setup' being successful
-            dependencies: ['setup'],
         },
         {
             name: 'api',
@@ -64,5 +44,3 @@ module.exports = defineConfig({
         },
     ],
 });
-
-module.exports.STORAGE_STATE = STORAGE_STATE;

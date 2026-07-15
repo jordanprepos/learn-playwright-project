@@ -1,10 +1,13 @@
 module.exports = {
-    validUser: {
-        email: 'superadmin',
-        password: 'test'
-    }, urls: {
+    cmsObk: {
         login: 'https://bima.meta-uat.nobubank.com/#/auth/login',
+        cmsOkbUser: 'superadmin',
+        cmsObkPass: 'test',
         webviewUrl: ''
+    }, ekycPortal: {
+        ekycPortalUrl: 'https://portal-ekyc-uat-cloud.nobubank.com/',
+        ekycPortalUser: 'staff1111intan@yopmail.com',
+        ekycPortalPass: 'intanAB1009$'
     }, partnerInfo: {
         partnerName: 'TEST CFX QA',
         partnerId: '86fdc92f55044068922c1763d06a2ddc',
