@@ -1,6 +1,5 @@
 const { test, expect } = require("@playwright/test");
 const { EkycPortalLoginPage } = require("../../../pages/ekyc-portal/ekycPortalLoginPage");
-const { EkycPortalSubmissionList } = require("../../../pages/ekyc-portal/submissionList");
 const testData = require("../../../utils/testData");
 const { dashboardBaseUrl } = require("../../../config/dashboardBase.config");
 
@@ -14,7 +13,7 @@ test.describe('EKYC Portal to Submission List Page', () => {
         const ekycPortalSubmissionList = new EkycPortalSubmissionList(page);
         await ekycPortalLoginPage.gotoEkycPortal()
         await ekycPortalLoginPage.fillCredentials(testData.ekycPortal.ekycPortalUser, testData.ekycPortal.ekycPortalPass)
-        await ekycPortalLoginPage.clickLoginButton()
+        await ekycPortalLoginPage.clickLoginButton();
         await expect(page).toHaveURL(portalEkycBaseUrl + '/dashboard');
         await expect(page.getByRole('heading', { name: 'DASHBOARD', level: 6 })).toBeVisible();
 

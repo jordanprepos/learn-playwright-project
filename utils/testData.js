@@ -6,6 +6,9 @@ module.exports = {
     }, ekycPortal: {
         ekycPortalUser: 'staff1111intan@yopmail.com',
         ekycPortalPass: 'intanAB1009$'
+    }, nobuDashboard: {
+        nobuUser: 'christopher.jordan@ddt.id',
+        nobuPass: 'kB9!WjeQFk4Z'
     }, partnerInfo: {
         partnerName: 'TEST CFX QA',
         partnerId: '86fdc92f55044068922c1763d06a2ddc',

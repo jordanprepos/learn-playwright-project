@@ -4,6 +4,7 @@ const { EkycPortalLoginPage } = require("../../../pages/ekyc-portal/ekycPortalLo
 const { EkycPortalSubmissionList } = require("../../../pages/ekyc-portal/ekycSubmissionList");
 const { getColumnValues } = require("../../../utils/excelHelper");
 const testData = require("../../../utils/testData");
+const { EkycPortalSubmissionDetail } = require("../../../pages/ekyc-portal/ekycSubmissionDetail");
 
 // KSS bulk-upload template. Header row uses "*" to mark required fields (e.g. "NIK*").
 const EXCEL_PATH = path.join(__dirname, "../../../data/excel.xlsx");
@@ -20,6 +21,7 @@ test.describe("EKYC Portal - Submission search by NIK (data-driven)", () => {
     test("search each NIK from data_kss", async ({ page }) => {
         const loginPage = new EkycPortalLoginPage(page);
         const submissionList = new EkycPortalSubmissionList(page);
+        const submissionDetail = new EkycPortalSubmissionDetail(page);
 
         await loginPage.gotoEkycPortal();
         await loginPage.fillCredentials(
@@ -40,6 +42,8 @@ test.describe("EKYC Portal - Submission search by NIK (data-driven)", () => {
                 await submissionList.navigateToSidebarFilterForm();
                 await submissionList.filterByNik(nik); // fills NIK + clicks Submit
                 await expect(submissionList.resultRow(nik)).toBeVisible();
+                const rowDataStatus = await submissionList.rowCell(nik, "Status");
+                await expect(rowDataStatus).toHaveText("WaitingApproval");
 
                 // Capture the Submission ID from the row, then open its detail page.
                 const submissionId = await submissionList.getSubmissionId(nik);
@@ -47,6 +51,11 @@ test.describe("EKYC Portal - Submission search by NIK (data-driven)", () => {
 
                 // The detail URL must carry the same Submission ID as the row.
                 await expect(page).toHaveURL(new RegExp(`/list-submission/detail/${submissionId}`));
+
+                await expect(submissionDetail.summaryValue("Submission ID")).toHaveText(submissionId);
+                await expect(submissionDetail.summaryValue("Status Submission")).toHaveText("Waiting Approval");
+                await expect(submissionDetail.customerDataValue("NIK")).toHaveText(nik);
+
             });
 
         }

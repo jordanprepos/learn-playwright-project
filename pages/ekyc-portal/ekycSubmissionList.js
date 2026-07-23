@@ -42,18 +42,17 @@ class EkycPortalSubmissionList {
         });
     }
 
-    viewDetailsButton(nik) {
-        return this.resultRow(nik).getByRole('button', { name: 'View Details' });
-    }
-
     /**
      * Reads the Submission ID (first column) from the row matching the given NIK.
      */
     async getSubmissionId(nik) {
         const idCell = this.resultRow(nik).getByRole('cell').first();
-        return (await idCell.innerText()).trim();
+        return (await idCell.textContent()).trim();
     }
 
+    viewDetailsButton(nik) {
+        return this.resultRow(nik).getByRole('button', { name: 'View Details' });
+    }
     /**
      * Opens the submission detail for the row matching the given NIK.
      * Auto-scrolls the (possibly off-screen) Action column into view before clicking,
@@ -63,6 +62,32 @@ class EkycPortalSubmissionList {
         await this.viewDetailsButton(nik).click();
         await this.page.waitForURL('**/list-submission/detail/**');
     }
+
+    /**
+    * 0-based index of a column by its header text (e.g. "Status", "Name"),
+    * so cell lookups don't break if columns are reordered.
+    */
+    async getColumnIndex(columnName) {
+        const labels = await this.page.getByRole('columnheader').allTextContents();
+        const index = labels.findIndex((text => text.trim() === columnName));
+        if ((await headers.nth(i).innerText()).trim() === columnName) {
+            throw new Error(`Column "${columnName}" not found in the submission table header`);
+
+        }
+        return index;
+    }
+
+
+    /**
+     * Cell locator for a given column in the row matching the NIK.
+     * Returned as a locator so assertions like toHaveText auto-retry.
+     */
+    async rowCell(nik, columnName) {
+        const index = await this.getColumnIndex(columnName);
+        return this.resultRow(nik).getByRole('cell').nth(index);
+    }
+
+
 
 }
 module.exports = { EkycPortalSubmissionList };
