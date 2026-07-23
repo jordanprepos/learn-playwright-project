@@ -6,6 +6,7 @@ const { generateHeaders } = require("../../../../utils/headerHelper");
 const { attachRequestResponse, attachScreenshot } = require("../../../../utils/reportHelper");
 const { enterPin, enterOtp } = require("../../../../utils/pinHelper");
 const { getOtpFromSlack } = require("../../../../utils/slackHelper");
+const { queryOne } = require("../../../../utils/mysqlHelper");
 
 const baseUrl = apiPath.batamBaseUrl;
 const csaResetPinUrl = `${baseUrl}${apiPath.cobrandSavings.pathResetPin}`;
@@ -43,6 +44,16 @@ test.describe('Cobrand Saving Reset PIN', () => {
      */
     test.describe('Positive', () => {
         test('Cobrand Saving Reset PIN successfully', async ({ request, page }) => {
+            let accountRow;
+            await test.step('verify account exists and is active in DB', async () => {
+                accountRow = await queryOne(
+                    'SELECT * FROM obk_saving_transaction.accounts WHERE account_id = ?',
+                    [activePartner.accountId]
+                );
+                expect(accountRow).not.toBeNull();
+                expect(accountRow.status).toBe(1);
+            });
+
             const requestBody = {
                 partnerReferenceNo: Math.floor(Math.random() * 1e12).toString(),
                 referenceNo: Math.floor(Math.random() * 1e12).toString(),
@@ -105,10 +116,11 @@ test.describe('Cobrand Saving Reset PIN', () => {
             await expect(page.getByRole('button', { name: 'Selanjutnya' })).toBeDisabled();
             await attachScreenshot(page, 'Screen 1 - Reset PIN Form');
 
-            // Step 1: Fill Form
-            await page.getByPlaceholder('Nama Lengkap').fill(activePartner.name);
-            await page.getByPlaceholder('Nomer Induk Kependudukan').fill(activePartner.nik);
-            await page.getByPlaceholder('Alamat Email').fill(activePartner.email);
+            // Step 1: Fill Form — sourced from the DB row, not partner config,
+            // since the form must match what's actually on the account record.
+            await page.getByPlaceholder('Nama Lengkap').fill(accountRow.full_name);
+            await page.getByPlaceholder('Nomer Induk Kependudukan').fill(accountRow.identification_number);
+            await page.getByPlaceholder('Alamat Email').fill(accountRow.email);
             await expect(page.getByRole('button', { name: 'Selanjutnya' })).toBeVisible();
             await attachScreenshot(page, 'Screen 1 - Form Filled');
 
