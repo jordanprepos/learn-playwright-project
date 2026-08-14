@@ -1,3 +1,4 @@
+const fs = require("fs");
 const ExcelJS = require("exceljs");
 
 /**
@@ -46,4 +47,34 @@ async function getColumnValues(filePath, sheetName, columnName) {
     return values;
 }
 
-module.exports = { getColumnValues };
+/**
+ * Appends a single row of values to a worksheet in a .xlsx file.
+ *
+ * Creates the workbook file and/or worksheet if they don't exist yet.
+ * When creating a new worksheet, `headers` (if provided) is written as row 1.
+ *
+ * @param {string} filePath    Path to the .xlsx file, e.g. "data/results.xlsx"
+ * @param {string} sheetName   Worksheet name, e.g. "results"
+ * @param {Array<string|number>} rowValues Values to append as a new row
+ * @param {string[]} [headers] Header row to write when the worksheet is newly created
+ * @returns {Promise<void>}
+ */
+async function appendRow(filePath, sheetName, rowValues, headers) {
+    const wb = new ExcelJS.Workbook();
+    if (fs.existsSync(filePath)) {
+        await wb.xlsx.readFile(filePath);
+    }
+
+    let ws = wb.getWorksheet(sheetName);
+    if (!ws) {
+        ws = wb.addWorksheet(sheetName);
+        if (headers) {
+            ws.addRow(headers);
+        }
+    }
+
+    ws.addRow(rowValues);
+    await wb.xlsx.writeFile(filePath);
+}
+
+module.exports = { getColumnValues, appendRow };

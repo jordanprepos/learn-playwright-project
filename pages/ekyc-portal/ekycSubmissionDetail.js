@@ -10,24 +10,32 @@ class EkycPortalSubmissionDetail {
      * Value of a field in the top summary card (2-column label/value rows),
      * e.g. "Submission ID", "Status Submission", "Category".
      *
-     * Some labels (e.g. "Phone Number", "CIF") also appear in lower cards, so we
-     * take the first match in DOM order — the summary card renders first.
+     * Anchors on the label's own text node (not a container) since MuiGrid
+     * containers nest, making "container that has this text" ambiguous at
+     * every level of the tree. Some labels (e.g. "Phone Number", "CIF") also
+     * appear in lower cards, so we take the first match in DOM order — the
+     * summary card renders first.
     */
     summaryValue(label) {
-        return this.page.locator('div.MuiGrid-container')
-            .filter({ has: this.page.getByText(label, { exact: true }) }).first()
-            .locator('> div.MuiGrid-item').last();
+        return this.page.getByText(label, { exact: true }).first()
+            .locator(
+                'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " MuiGrid-item ")][1]' +
+                '/following-sibling::div[contains(concat(" ", normalize-space(@class), " "), " MuiGrid-item ")][1]',
+            );
     }
 
     /**
      * Value in the "Client Data" (middle) column of the Customer Data section,
      * e.g. field "NIK" or "Name". These rows have 3 columns
-     * (label / Client Data / Dukcapil Data), so the value is the 2nd item.
+     * (label / Client Data / Dukcapil Data); Client Data is the cell
+     * immediately following the label.
     */
     customerDataValue(label) {
-        return this.oage.locator('div.MuiGrid-container')
-            .filter({ has: this.page.getByText(label, { exact: true }) }).first()
-            .locator('> div.MuiGrid-item').nth(1);
+        return this.page.getByText(label, { exact: true }).first()
+            .locator(
+                'xpath=ancestor::div[contains(concat(" ", normalize-space(@class), " "), " MuiGrid-item ")][1]' +
+                '/following-sibling::div[contains(concat(" ", normalize-space(@class), " "), " MuiGrid-item ")][1]',
+            );
     }
 
 }

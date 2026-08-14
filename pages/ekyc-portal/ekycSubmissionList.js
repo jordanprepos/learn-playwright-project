@@ -9,6 +9,10 @@ class EkycPortalSubmissionList {
         this.submissionFilterBtn = this.page.getByRole('button', { name: 'Filter', exact: true });
         this.nikFilterField = this.page.locator('input[name="nik"]');
         this.submitFilterBtn = this.page.getByRole('button', { name: 'Submit', exact: true });
+        this.noResultsMessage = this.page.getByRole('heading', { name: 'No results found' });
+        this.detailApproveBtn = this.page.getByRole('button', { name: 'Approve', exact: true });
+        this.approvalRemarksField = this.page.getByPlaceholder('please fill remarks first');
+        this.approvalConfirmYesBtn = this.page.getByRole('button', { name: 'Yes', exact: true });
     }
 
     async navigateToSubmissionList() {
@@ -20,6 +24,25 @@ class EkycPortalSubmissionList {
     async navigateToSidebarFilterForm() {
         await expect(this.submissionFilterBtn).toBeVisible();
         await this.submissionFilterBtn.click();
+    }
+
+    /**
+     * Approves the currently open submission's detail page: clicks Approve,
+     * fills the confirmation modal's remark (Yes stays disabled until it's
+     * non-empty), confirms, then waits for the redirect back to the list
+     * once the system finishes processing.
+     */
+    async approveSubmission(remark) {
+        await expect(this.detailApproveBtn).toBeVisible();
+        await this.detailApproveBtn.click();
+
+        await expect(this.approvalRemarksField).toBeVisible();
+        await this.approvalRemarksField.fill(remark);
+
+        await expect(this.approvalConfirmYesBtn).toBeEnabled();
+        await this.approvalConfirmYesBtn.click();
+
+        await this.page.waitForURL('**/list-submission', { timeout: 15_000 });
     }
 
     /**
@@ -70,9 +93,8 @@ class EkycPortalSubmissionList {
     async getColumnIndex(columnName) {
         const labels = await this.page.getByRole('columnheader').allTextContents();
         const index = labels.findIndex((text => text.trim() === columnName));
-        if ((await headers.nth(i).innerText()).trim() === columnName) {
+        if (index === -1) {
             throw new Error(`Column "${columnName}" not found in the submission table header`);
-
         }
         return index;
     }
