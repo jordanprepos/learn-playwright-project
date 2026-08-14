@@ -1,6 +1,9 @@
 const { test, expect } = require('@playwright/test');
 const { TambahLimitManagementPage } = require('../../pages/tambah-limit-management');
 const testData = require('../../utils/testData');
+const { dashboardBaseUrl } = require('../../config/dashboardBase.config');
+
+const cmsBackofficeBaseUrl = dashboardBaseUrl.obkCmsBackofficeBaseUrl;
 
 test.afterEach(async ({ page }) => {
     // This will keep the browser open and show the Playwright Inspector
@@ -15,10 +18,10 @@ test('Tambah Limit Management', async ({ page }) => {
     // Increase timeout since this flow involves heavy navigations
     test.setTimeout(200000);
 
-    // 1. Open the application (will use the stored storage state from .auth/user.json)
+    // 1. Open the application
     // We go to /# /dashboard to ensure we land on the right page
-    await page.goto('/#/dashboard');
-    
+    await page.goto(cmsBackofficeBaseUrl + '/#/dashboard');
+
     // 2. Initial check to ensure we are logged in/on dashboard
     await expect(page.getByText('DASHBOARD PAGE')).toBeVisible();
 
@@ -26,13 +29,13 @@ test('Tambah Limit Management', async ({ page }) => {
 
     // 3. Navigate through Sidebar
     await tambahLimitPage.navigateToLimitManagement();
-    
+
     // 4. Verify we reached the Limit Management page
     await expect(page).toHaveURL(/limit-config\/list/);
-    
+
     // 5. Click Tambah
     await tambahLimitPage.clickTambahNewLimitManagement();
-    
+
     // 6. Verify we are on the "Tambah Limit Management" form
     await expect(page.getByText('Tambah Limit Management')).toBeVisible();
     await tambahLimitPage.fillForm(
@@ -53,5 +56,5 @@ test('Tambah Limit Management', async ({ page }) => {
 
 
 
-    
+
 });

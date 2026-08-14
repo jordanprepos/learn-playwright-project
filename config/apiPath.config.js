@@ -8,6 +8,8 @@ const apiPath = {
         pathBalanceInquiryV1_1: '/cobrand-saving/v1.1/balance-inquiry/',
         pathChangePin: '/cobrand-saving/v1.0/change-pin/',
         pathResetPin: '/cobrand-saving/v1.0/reset-mpin/',
+        pathDecodeQr: '/cobrand-saving/v1.0/qr/qr-mpm-decode/',
+        pathPaymentQr: '/cobrand-saving/v1.0/qr/qr-mpm-payment/',
     },
     cobrandEmoney: {
         balanceEnquiry: '/v1.0/balance-inquiry/cobrand/',
