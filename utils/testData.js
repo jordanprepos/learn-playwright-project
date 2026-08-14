@@ -5,7 +5,7 @@ module.exports = {
         webviewUrl: ''
     }, ekycPortal: {
         ekycPortalUser: 'staff1111intan@yopmail.com',
-        ekycPortalPass: 'intanAB1009$'
+        ekycPortalPass: 'Intan@DDT2026'
     }, nobuDashboard: {
         nobuUser: 'christopher.jordan@ddt.id',
         nobuPass: 'kB9!WjeQFk4Z'
