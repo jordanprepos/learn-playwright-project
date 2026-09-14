@@ -77,4 +77,59 @@ async function appendRow(filePath, sheetName, rowValues, headers) {
     await wb.xlsx.writeFile(filePath);
 }
 
-module.exports = { getColumnValues, appendRow };
+/**
+ * Updates one or more cells in the row whose keyColumn matches keyValue.
+ * Columns (both the key and the targets) are located by header text (row 1),
+ * same lookup as getColumnValues.
+ *
+ * @param {string} filePath
+ * @param {string} sheetName
+ * @param {string} keyColumnName        Header text of the column to match on, e.g. "NIK*"
+ * @param {string} keyValue             Value to match in that column, e.g. a NIK
+ * @param {Object<string,string>} valuesByColumn  Map of header text -> value to write,
+ *   e.g. { "CIF*": cif, "Nomor Rekening Auto Debet": accountNumber }
+ * @returns {Promise<boolean>} true if a matching row was found and updated
+ */
+async function updateRowByKey(filePath, sheetName, keyColumnName, keyValue, valuesByColumn) {
+    const wb = new ExcelJS.Workbook();
+    await wb.xlsx.readFile(filePath);
+
+    const ws = wb.getWorksheet(sheetName);
+    if (!ws) {
+        throw new Error(`Worksheet "${sheetName}" not found in ${filePath}`);
+    }
+
+    const colIndexByName = {};
+    ws.getRow(1).eachCell((cell, colNumber) => {
+        colIndexByName[String(cell.value).trim()] = colNumber;
+    });
+
+    const keyCol = colIndexByName[keyColumnName];
+    if (!keyCol) {
+        throw new Error(`Column "${keyColumnName}" not found in sheet "${sheetName}"`);
+    }
+
+    let targetRow = null;
+    ws.eachRow({ includeEmpty: false }, (row, rowNumber) => {
+        if (rowNumber === 1) return; // header
+        const cell = row.getCell(keyCol);
+        if (cell.value !== null && cell.value !== undefined && String(cell.value).trim() === keyValue) {
+            targetRow = row;
+        }
+    });
+
+    if (!targetRow) return false;
+
+    for (const [columnName, value] of Object.entries(valuesByColumn)) {
+        const colIndex = colIndexByName[columnName];
+        if (!colIndex) {
+            throw new Error(`Column "${columnName}" not found in sheet "${sheetName}"`);
+        }
+        targetRow.getCell(colIndex).value = value;
+    }
+
+    await wb.xlsx.writeFile(filePath);
+    return true;
+}
+
+module.exports = { getColumnValues, appendRow, updateRowByKey };
