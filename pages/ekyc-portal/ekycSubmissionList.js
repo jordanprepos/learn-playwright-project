@@ -55,35 +55,84 @@ class EkycPortalSubmissionList {
     }
 
     /**
-     * Returns the results-table row whose NIK cell exactly matches the given NIK.
-     * Exact match avoids colliding with the Phone Number column, which can share
-     * a trailing digit sequence with the NIK.
+     * Every submission row for the given NIK. A NIK accumulates many submissions
+     * (repeat runs stack up) and the portal's NIK filter returns all of them, so
+     * this is deliberately plural — callers pick the row they want, usually via
+     * scanRows(). Exact match keeps this off the Phone Number column, which can
+     * share a trailing digit sequence with the NIK.
      */
-    resultRow(nik) {
+    resultRows(nik) {
         return this.page.getByRole('row').filter({
             has: this.page.getByRole('cell', { name: nik, exact: true }),
         });
     }
 
     /**
-     * Reads the Submission ID (first column) from the row matching the given NIK.
+     * Newest row for the NIK (the table is sorted newest-first). Single-row, so
+     * it is safe for strict operations like waitFor — use it to wait for the
+     * filtered table to render before calling scanRows().
      */
-    async getSubmissionId(nik) {
-        const idCell = this.resultRow(nik).getByRole('cell').first();
-        return (await idCell.textContent()).trim();
+    resultRow(nik) {
+        return this.resultRows(nik).first();
     }
 
-    viewDetailsButton(nik) {
-        return this.resultRow(nik).getByRole('button', { name: 'View Details' });
-    }
     /**
-     * Opens the submission detail for the row matching the given NIK.
-     * Auto-scrolls the (possibly off-screen) Action column into view before clicking,
-     * then waits for the detail route to load.
+     * A row addressed by its Submission ID. IDs are unique, so this is strict-safe
+     * without .first() and — unlike a positional index — still points at the same
+     * submission after the list re-renders (e.g. following an approval).
      */
-    async openSubmissionDetail(nik) {
-        await this.viewDetailsButton(nik).click();
-        await this.page.waitForURL('**/list-submission/detail/**');
+    rowBySubmissionId(submissionId) {
+        return this.page.getByRole('row').filter({
+            has: this.page.getByRole('cell', { name: submissionId, exact: true }),
+        });
+    }
+
+    /**
+     * Reads Submission ID / CIF / Status off every row for this NIK, so a caller
+     * can choose which submission to act on.
+     *
+     * Whether a submission is provisioned is not predictable from its Status —
+     * two rows can both be "Approved" with only one carrying a CIF — so the CIF
+     * cell itself is the discriminator. An unprovisioned CIF is an *empty* cell
+     * here (the "-" placeholder is a detail-page thing).
+     *
+     * Only call this once the filtered table has rendered; count() does not
+     * auto-wait, so scanning too early reads zero rows — or the previous NIK's.
+     */
+    async scanRows(nik) {
+        const [idIndex, cifIndex, statusIndex] = await Promise.all([
+            this.getColumnIndex('Submission ID'),
+            this.getColumnIndex('CIF'),
+            this.getColumnIndex('Status'),
+        ]);
+
+        const rows = this.resultRows(nik);
+        const summaries = [];
+        for (let i = 0; i < (await rows.count()); i++) {
+            const cells = rows.nth(i).getByRole('cell');
+            const [submissionId, cif, status] = await Promise.all([
+                cells.nth(idIndex).textContent(),
+                cells.nth(cifIndex).textContent(),
+                cells.nth(statusIndex).textContent(),
+            ]);
+            summaries.push({
+                submissionId: submissionId.trim(),
+                cif: cif.trim(),
+                status: status.trim(),
+            });
+        }
+        return summaries;
+    }
+
+    /**
+     * Opens the submission detail for a given Submission ID, then waits for the
+     * detail route to load.
+     */
+    async openSubmissionDetail(submissionId) {
+        await this.rowBySubmissionId(submissionId)
+            .getByRole('button', { name: 'View Details' })
+            .click();
+        await this.page.waitForURL(`**/list-submission/detail/${submissionId}`);
     }
 
     /**
@@ -101,12 +150,12 @@ class EkycPortalSubmissionList {
 
 
     /**
-     * Cell locator for a given column in the row matching the NIK.
+     * Cell locator for a given column in the row with this Submission ID.
      * Returned as a locator so assertions like toHaveText auto-retry.
      */
-    async rowCell(nik, columnName) {
+    async rowCell(submissionId, columnName) {
         const index = await this.getColumnIndex(columnName);
-        return this.resultRow(nik).getByRole('cell').nth(index);
+        return this.rowBySubmissionId(submissionId).getByRole('cell').nth(index);
     }
 
 
