@@ -2,14 +2,14 @@
 
 // Shared base for all Boost sub-partners
 
-const sandboxBase = {
-    partnerId: process.env.SANDBOX_PARTNER_ID,
-    clientId: process.env.SANDBOX_CLIENT_ID,
-    clientSecret: process.env.SANDBOX_CLIENT_SECRET,
-    clientKey: process.env.SANDBOX_CLIENT_ID,
-    privateKey: process.env.SANDBOX_PRIVATE_KEY,
+const kopnusBase = {
+    partnerId: process.env.KOPNUS_PARTNER_ID,
+    clientId: process.env.KOPNUS_CLIENT_ID,
+    clientSecret: process.env.KOPNUS_CLIENT_SECRET,
+    clientKey: process.env.KOPNUS_CLIENT_ID,
+    privateKey: process.env.KOPNUS_PRIVATE_KEY,
     ipAddress: process.env.B2B_IP_ADDRESS,
-    channelId: process.env.SANDBOX_CHANNEL_ID || 'APIMGM',
+    channelId: process.env.KOPNUS_CHANNEL_ID || 'APIMGM',
     redirectUrl: 'https://688358d521fa24876a9dbb73.mockapi.io',
     partnerUrl: 'https://mock-mb-ob.meta-uat.nobubank.com'
 }
@@ -36,10 +36,10 @@ const boostBase = {
 };
 
 const bukuWarungBase = {
-    partnId: process.env.BUKUWARUNG_PARTNER_ID,
+    partnerId: process.env.BUKUWARUNG_PARTNER_ID,
     clientId: process.env.BUKUWARUNG_CLIENT_ID,
     clientSecret: process.env.BUKUWARUNG_CLIENT_SECRET,
-    clientKey: process.env.BUKUWARUNG_CLIENT_KEY,
+    clientKey: process.env.BUKUWARUNG_CLIENT_ID,
     privateKey: process.env.BUKUWARUNG_PRIVATE_KEY,
     ipAddress: process.env.B2B_IP_ADDRESS,
     channelId: process.env.BUKUWARUNG_CHANNEL_ID || 'APIMGM',
@@ -49,10 +49,10 @@ const bukuWarungBase = {
 
 const partners = {
 
-    sandbox_audi_lagi: {
-        ...sandboxBase,
+    kopnus_audi_lagi: {
+        ...kopnusBase,
         deviceId: 'audi-device-666',
-        authCode: process.env.SANDBOX_AUDI_LAGI_AUTH_CODE,
+        authCode: process.env.KOPNUS_AUDI_LAGI_AUTH_CODE,
         name: 'AUDI DHARMAWAN LAGI',
         phoneNo: '087787111332',
         email: 'audi.dharmawan@digdayatech.id',
@@ -62,10 +62,23 @@ const partners = {
         accountNo: '81100144416',
     },
 
-    sandbox_uat_card_service: {
-        ...sandboxBase,
+    kopnus_jordan: {
+        ...kopnusBase,
+        authCode: process.env.KOPNUS_UAT_JORDAN_AUTH_CODE,
+        deviceId: '081287938664',
+        name: 'Jordan',
+        phoneNo: '081287938664',
+        email: 'christopher.jordan@ddt.id',
+        nik: '3277081287938664',
+        accountId: '111937269371',
+        cif: '260908144947000',
+        accountNo: '81100237929',
+    },
+
+    kopnus_uat_card_service: {
+        ...kopnusBase,
         deviceId: 'device-xiaomi',
-        authCode: process.env.SANDBOX_UAT_CARD_SERVICE_AUTH_CODE,
+        authCode: process.env.KOPNUS_UAT_CARD_SERVICE_AUTH_CODE,
         name: 'UAT CARD SERVICE',
         phoneNo: '085161451122',
         email: 'christopher.jordan@ddt.id',
@@ -75,10 +88,10 @@ const partners = {
         accountNo: '81100201339',
     },
 
-    sandbox_uat_xiaomi_redmi: {
-        ...sandboxBase,
+    kopnus_uat_xiaomi_redmi: {
+        ...kopnusBase,
         deviceId: 'device-xiaomi-redmi',
-        authCode: process.env.SANDBOX_UAT_XIAOMI_REDMI_AUTH_CODE,
+        authCode: process.env.KOPNUS_UAT_XIAOMI_REDMI_AUTH_CODE,
         name: 'UAT XIAOMI REDMI',
         phoneNo: '085161451133',
         email: 'christopher.jordan@ddt.id',
@@ -105,6 +118,7 @@ const partners = {
 
     cfx_ami_sihotang: {
         ...cfxBase,
+        authCode: process.env.CFX_AMI_SIHOTANG_AUTH_CODE,
         deviceId: '089688100207',
         name: 'AMI SIHOTANG',
         phoneNo: '089688100207',
@@ -170,7 +184,7 @@ const partners = {
         accountNo: '81100230185',
     },
 
-    boost_demoua2t: {
+    boost_demouat2: {
         ...boostBase,
         authCode: process.env.BOOST_DEMOUAT2_AUTH_CODE,
         deviceId: '0811222119',
@@ -185,7 +199,7 @@ const partners = {
 
     bukuWarung_hotfixDeviceA: {
         ...bukuWarungBase,
-        authCode: process.env.BUKUWARUNG_HOTFIX_DEVICE_A_AUTH_CODE,
+        authCode: process.env.BUKUWARUNG_HOTFIXDEVICEA_AUTH_CODE,
         deviceId: 'hotfix-device-a',
         name: 'Hotfix Device A',
         phoneNo: '089987990019',
@@ -198,7 +212,7 @@ const partners = {
 
     bukuWarung_hotfixDeviceX: {
         ...bukuWarungBase,
-        authCode: process.env.BUKUWARUNG_HOTFIX_DEVICE_X_AUTH_CODE,
+        authCode: process.env.BUKUWARUNG_HOTFIXDEVICEX_AUTH_CODE,
         deviceId: 'hotfix-device-x',
         name: 'Hotfix Device X',
         phoneNo: '089987990020',
@@ -237,9 +251,9 @@ const partners = {
 };
 
 // Select the partner based on PARTNER_ENV environment variable
-// Valid keys: sandbox_audi_lagi, sandbox_uat_card_service, cfx_atreus_satu,
+// Valid keys: kopnus_audi_lagi, kopnus_uat_card_service, cfx_atreus_satu,
 //             cfx_ami_sihotang, boost_huskar, boost_rexus, boost_rxking
-const activePartnerEnv = process.env.PARTNER_ENV || 'sandbox_uat_card_service';
+const activePartnerEnv = process.env.PARTNER_ENV || 'kopnus_uat_card_service';
 const activePartner = partners[activePartnerEnv];
 
 if (!activePartner) {
